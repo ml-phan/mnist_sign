@@ -13,7 +13,7 @@ Requirements:
     `pip install seaborn`
 1. skorch library
     `pip install seaborn`
-
+1. Pytorch : https://pytorch.org/get-started/locally/
 ## Usage
 Simply run the python script and provide architecture to be used
 
