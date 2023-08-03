@@ -3,9 +3,9 @@ import sys
 
 from sklearn.model_selection import train_test_split
 
-from data_loading import *
-from train import *
-from test import *
+from utils.data_loading import *
+from model.train import *
+from model.test import *
 
 
 def main():
