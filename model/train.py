@@ -1,4 +1,4 @@
-from architecture import MnistClassifier
+from model.architecture import MnistClassifier
 from skorch import NeuralNetClassifier
 import torch
 import numpy as np
