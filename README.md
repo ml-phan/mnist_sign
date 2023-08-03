@@ -24,3 +24,9 @@ To use a convolutional neural network:
 
 `python main.py -cnn`
 
+## License
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Contact
+phan@uni-potsdam.de
+hugo.jorge@uni-potsdam.de 
