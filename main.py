@@ -1,8 +1,6 @@
 import argparse
 import sys
 
-from sklearn.model_selection import train_test_split
-
 from utils.data_loading import *
 from model.train import *
 from model.test import *
@@ -20,16 +18,14 @@ def main():
 
     if args.fc:
         mnist = get_dataset_openml()
-        X, y = data_preprocessing(mnist)
-        X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                            test_size=0.25,
-                                                            random_state=42)
+        X_train, X_test, y_train, y_test = data_preprocessing(mnist)
+        plot_example(X_train, y_train)
         model = train_model_fc(X_train, y_train)
         evaluate(model, X_test, y_test)
-
         torch.save(model, r"best_models/fc_nn.pt")
 
     if args.cnn:
+        # TODO Implement CNN training - evaluation
         print("Do something with your CNN implementation here!")
 
     if len(sys.argv) <= 2:
