@@ -25,8 +25,11 @@ def main():
         torch.save(model, r"best_models/fc_nn.pt")
 
     if args.cnn:
-        # TODO Implement CNN training - evaluation
-        print("Do something with your CNN implementation here!")
+        mnist = get_dataset_openml()
+        X_train, X_test, y_train, y_test = data_preprocessing_cnn(mnist)
+        model = train_model_CNN(X_train, y_train)
+        evaluate_mode(model, X_test, y_test)
+        torch.save(model, r"best_models/cnn.pt")
 
     if len(sys.argv) <= 2:
         print(parser.print_help())

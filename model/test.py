@@ -4,6 +4,8 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import torch
+
 
 
 def evaluate(model, X_test: np.array, y_test: np.array):
@@ -29,3 +31,22 @@ def evaluate(model, X_test: np.array, y_test: np.array):
     plt.tight_layout()
     plt.show()
 
+def evaluate_mode(model, train_data, test_data):
+    def calculate_accuracy(data_loader):
+        correct = 0
+        total = 0
+        with torch.no_grad():
+            for inputs, labels in data_loader:
+                outputs = model(inputs)
+                _, predicted = torch.max(outputs, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+        accuracy = correct / total * 100
+        return accuracy
+    
+    train_accuracy = calculate_accuracy(train_data)
+    test_accuracy = calculate_accuracy(test_data)
+    
+    print("Train Data Accuracy: {:.2f}%".format(train_accuracy))
+    print("Test Data Accuracy: {:.2f}%".format(test_accuracy))
+    

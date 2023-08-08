@@ -6,6 +6,8 @@ from sklearn.datasets import fetch_openml
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import warnings
+import torch
+import pandas as pd
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
@@ -48,6 +50,31 @@ def data_preprocessing(mnist: sklearn.utils.Bunch) -> Tuple[np.array, np.array,
     sns.histplot(y_test, bins=25, ax=axs[1])
     axs[1].set_title("Distribution of test set classes")
     plt.show()
+    return X_train, X_test, y_train, y_test
+
+def data_preprocessing_cnn(file_path: str, test_split: float = 0.2,
+                                      random_state: int = 42) -> Tuple[torch.Tensor, torch.Tensor,
+                                                                      torch.Tensor, torch.Tensor]:
+    """
+    Preprocess data from a file using SMDataset structure
+    :param file_path: Path to the CSV file
+    :param test_split: Fraction of data to be used for testing
+    :param random_state: Random seed for reproducibility
+    :return: X_train, X_test, y_train, y_test as torch Tensors
+    """
+    data = pd.read_csv(file_path)
+    y = data["label"]
+    y = torch.tensor(y.values, dtype=torch.long)
+    del data["label"]
+    
+    # Ensure 1 channel for grayscale images
+    X = (torch.tensor(data.values, dtype=torch.float) / 255).view(-1, 1, 28, 28)
+    
+    # Split data into training and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                        test_size=test_split,
+                                                        random_state=random_state)
+    
     return X_train, X_test, y_train, y_test
 
 
