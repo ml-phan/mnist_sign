@@ -9,6 +9,7 @@ import warnings
 import torch
 import pandas as pd
 from sklearn.utils import Bunch
+from torch.utils.data import Dataset, DataLoader
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
@@ -53,22 +54,20 @@ def data_preprocessing(mnist: sklearn.utils.Bunch) -> Tuple[np.array, np.array,
     plt.show()
     return X_train, X_test, y_train, y_test
 
-def data_preprocessing_cnn(mnist: Bunch) -> Tuple[np.array, np.array, np.array, np.array]:
-    """
-    Extract input and target data from a sklearn Bunch data object
-    :param mnist: A Bunch object containing the dataset
-    :return: X_train, X_test, y_train, y_test as numpy arrays
-    """
-    X = mnist.data.values.astype('float32')  # Convert to float32
-    y = mnist.target.values.astype('int64')  # Convert to int64
-    X /= 255  # Normalize pixel values
-    X = X.reshape(-1, 1, 28, 28)  # Reshape data to match the input shape
-    test_split = 0.2
-    X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                        test_size=test_split,
-                                                        random_state=42)  # Split data into training and test sets
-
-    return X_train, X_test, y_train, y_test
+class SMDataset(Dataset):
+    def __init__(self, file_path):
+        data = pd.read_csv(file_path)
+        self.y = data["label"]
+        self.y = torch.tensor(self.y.values, dtype=torch.long)
+        del data["label"]
+        # Ensure 1 channel for grayscale images
+        self.x = (torch.tensor(data.values, dtype=torch.float) / 255).view(-1, 1, 28, 28)  
+    
+    def __len__(self):
+        return self.x.shape[0]
+    
+    def __getitem__(self, idx):
+        return self.x[idx], self.y[idx]   
 
 
 def plot_example(X: np.array, y: np.array):

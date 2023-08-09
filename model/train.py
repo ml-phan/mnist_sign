@@ -19,12 +19,15 @@ def train_model_fc(X_train: np.array, y_train: np.array,
     net.fit(X_train, y_train)
     return net
 
-def train_model_CNN(data, model, n_epochs=20):
+def train_model_CNN(data, model, n_epochs=20, lr=0.001):
     optimizer = Adam(model.parameters(), lr=0.001)    
     L = nn.CrossEntropyLoss()
     
     losses = []
     epochs = []
+    
+    print(f"Training a Convolutional Neural Network for {n_epochs} epochs,"
+          f"with learning rate {lr}")
     
     for epoch in range(n_epochs):
         print(f"Training epoch {epoch}.")

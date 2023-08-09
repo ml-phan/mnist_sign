@@ -4,6 +4,8 @@ import sys
 from utils.data_loading import *
 from model.train import *
 from model.test import *
+from model.architecture import *
+
 
 
 def main():
@@ -25,11 +27,18 @@ def main():
         torch.save(model, r"best_models/fc_nn.pt")
 
     if args.cnn:
-        mnist = get_dataset_openml()
-        X_train, X_test, y_train, y_test = data_preprocessing_cnn(mnist)
-        model = train_model_CNN(X_train, y_train)
-        evaluate_mode(model, X_test, y_test)
-        torch.save(model, r"best_models/cnn.pt")
+        train_path = r"data/sign_mnist_train.csv"
+        test_path = r"data/sign_mnist_test.csv"
+        train_data = SMDataset(train_path)
+        test_data = SMDataset(test_path)
+        train_dl = DataLoader(train_data, batch_size=128, shuffle=True)
+        test_dl = DataLoader(test_data, batch_size=32)
+        # Create the CNN model
+        model_cnn = SMCNN()
+        # Train the CNN model
+        epoch_data, loss_data = train_model_CNN(train_dl, model_cnn, n_epochs=1)
+        evaluate_mode(train_data,test_data,model_cnn)
+        torch.save(model_cnn, r"best_models/cnn.pt")
 
     if len(sys.argv) <= 2:
         print(parser.print_help())

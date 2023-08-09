@@ -31,22 +31,16 @@ def evaluate(model, X_test: np.array, y_test: np.array):
     plt.tight_layout()
     plt.show()
 
-def evaluate_mode(model, train_data, test_data):
-    def calculate_accuracy(data_loader):
-        correct = 0
-        total = 0
-        with torch.no_grad():
-            for inputs, labels in data_loader:
-                outputs = model(inputs)
-                _, predicted = torch.max(outputs, 1)
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
-        accuracy = correct / total * 100
-        return accuracy
-    
-    train_accuracy = calculate_accuracy(train_data)
-    test_accuracy = calculate_accuracy(test_data)
-    
-    print("Train Data Accuracy: {:.2f}%".format(train_accuracy))
-    print("Test Data Accuracy: {:.2f}%".format(test_accuracy))
+def evaluate_mode(train_data, test_data, model):
+    x_train, y_train = train_data[:]
+    x_test, y_test = test_data[:]
+    pred_y_train = model(x_train)
+    pred_y_test = model(x_test)
+    train_acc = (pred_y_train.argmax(axis=1) == y_train).sum() / len(y_train) * 100
+    test_acc = (pred_y_test.argmax(axis=1) == y_test).sum() / len(y_test) * 100
+    print("Train set:", len(x_train))
+    print("Test set:", len(x_test))
+    print(f"Train data accuracy: {train_acc.numpy():.2f}%")
+    print(f"Test data accuracy: {test_acc.numpy():.2f}%")
+    return train_acc, test_acc
     
