@@ -4,6 +4,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 from torch.optim import Adam
+from sklearn.model_selection import ParameterGrid
 
 def train_model_fc(X_train: np.array, y_train: np.array,
                    learning_rate=0.02,
@@ -40,3 +41,27 @@ def train_model_CNN(data, model, n_epochs=20, lr=0.001):
             epochs.append(epoch + i / len(data))
             losses.append(loss_value.item())
     return np.array(epochs), np.array(losses)
+
+# Grid Search Function
+def grid_search(train_data, test_data, num_epochs=20):
+    param_grid = {
+        'dropout_rate': list(np.arange(1e-7,1e-5,((1e-5-1e-7)/3))),
+        'weight_decay': list(np.arange(1e-7,1e-5,((1e-5-1e-7)/3))),
+        'learning_rate': list(np.arange(1e-5,1e-2,((1e-2-1e-5)/3)))
+                             }
+
+    best_accuracy = 0.0
+    best_params = None
+
+    for params in ParameterGrid(param_grid):
+        model_cnn = SMCNN(dropout_rate=params['dropout_rate'], weight_decay=params['weight_decay'])
+        optimizer = Adam(model_cnn.parameters(), lr=params['learning_rate'])
+        epoch_data, loss_data = train_model(train_dl, model_cnn, num_epochs)
+        _, test_accuracy = evaluate_mode(train_dl, test_dl, model_cnn)
+        print("Hyperparameters:", params)
+
+        if test_accuracy > best_accuracy:
+            best_accuracy = test_accuracy
+            best_params = params
+    
+    return best_accuracy, best_params

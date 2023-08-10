@@ -8,7 +8,6 @@ from sklearn.model_selection import train_test_split
 import warnings
 import torch
 import pandas as pd
-from sklearn.utils import Bunch
 from torch.utils.data import Dataset, DataLoader
 warnings.simplefilter(action='ignore', category=FutureWarning)
 

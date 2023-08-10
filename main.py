@@ -16,6 +16,8 @@ def main():
                              "architecture")
     parser.add_argument("-cnn", action='store_true',
                         help="using convolutional neural network architecture")
+    parser.add_argument("-gs", action='store_true',
+                        help="using convolutional neural network architecture with grid search")
     args = parser.parse_args()
 
     if args.fc:
@@ -32,13 +34,30 @@ def main():
         train_data = SMDataset(train_path)
         test_data = SMDataset(test_path)
         train_dl = DataLoader(train_data, batch_size=128, shuffle=True)
+        test_dl = DataLoader(test_data, batch_size=16)
+        # Create the CNN model
+        model_cnn = SMCNN()
+        # Train the CNN model
+        epoch_data, loss_data = train_model_CNN(train_dl, model_cnn, n_epochs=20)
+        evaluate_mode(train_data,test_data,model_cnn)
+        torch.save(model_cnn, r"best_models/cnn.pt")
+        
+    if args.gs:
+        train_path = r"data/sign_mnist_train.csv"
+        test_path = r"data/sign_mnist_test.csv"
+        train_data = SMDataset(train_path)
+        test_data = SMDataset(test_path)
+        train_dl = DataLoader(train_data, batch_size=128, shuffle=True)
         test_dl = DataLoader(test_data, batch_size=32)
         # Create the CNN model
         model_cnn = SMCNN()
         # Train the CNN model
-        epoch_data, loss_data = train_model_CNN(train_dl, model_cnn, n_epochs=1)
-        evaluate_mode(train_data,test_data,model_cnn)
-        torch.save(model_cnn, r"best_models/cnn.pt")
+        best_accuracy, best_params = grid_search(train_data, test_data, num_epochs=20)
+        print("Grid Search Results:")
+        print(f"Best Test Accuracy: {best_accuracy:.2f}%")
+        print("Best Hyperparameters:", best_params)
+        torch.save(model_cnn, r"best_models/gs.pt")
+        
 
     if len(sys.argv) <= 2:
         print(parser.print_help())
