@@ -5,6 +5,8 @@ import numpy as np
 import torch.nn as nn
 from torch.optim import Adam
 from sklearn.model_selection import ParameterGrid
+from model.architecture import *
+from torch.utils.data import Dataset, DataLoader
 
 def train_model_fc(X_train: np.array, y_train: np.array,
                    learning_rate=0.02,
@@ -49,14 +51,17 @@ def grid_search(train_data, test_data, num_epochs=20):
         'weight_decay': list(np.arange(1e-7,1e-5,((1e-5-1e-7)/3))),
         'learning_rate': list(np.arange(1e-5,1e-2,((1e-2-1e-5)/3)))
                              }
-
+    
+    train_dl = DataLoader(train_data, batch_size=128, shuffle=True)
+    test_dl = DataLoader(test_data, batch_size=32)
+    
     best_accuracy = 0.0
     best_params = None
 
     for params in ParameterGrid(param_grid):
-        model_cnn = SMCNN(dropout_rate=params['dropout_rate'], weight_decay=params['weight_decay'])
+        model_cnn = SMCNN_gs(dropout_rate=params['dropout_rate'], weight_decay=params['weight_decay'])
         optimizer = Adam(model_cnn.parameters(), lr=params['learning_rate'])
-        epoch_data, loss_data = train_model(train_dl, model_cnn, num_epochs)
+        epoch_data, loss_data = train_model_CNN(train_dl, model_cnn, num_epochs)
         _, test_accuracy = evaluate_mode(train_dl, test_dl, model_cnn)
         print("Hyperparameters:", params)
 

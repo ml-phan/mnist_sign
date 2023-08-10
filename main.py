@@ -47,10 +47,6 @@ def main():
         test_path = r"data/sign_mnist_test.csv"
         train_data = SMDataset(train_path)
         test_data = SMDataset(test_path)
-        train_dl = DataLoader(train_data, batch_size=128, shuffle=True)
-        test_dl = DataLoader(test_data, batch_size=32)
-        # Create the CNN model
-        model_cnn = SMCNN()
         # Train the CNN model
         best_accuracy, best_params = grid_search(train_data, test_data, num_epochs=20)
         print("Grid Search Results:")
