@@ -29,6 +29,10 @@ To use a convolutional neural network:
 
 `python main.py -cnn`
 
+To use a grid search with the convolutional neural network:
+
+`python main.py -gs`
+
 ## License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
