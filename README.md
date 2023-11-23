@@ -39,4 +39,4 @@ To use a grid search with the convolutional neural network:
 ## Contact
 phan@uni-potsdam.de
 
-hugo.jorge@uni-potsdam.de 
+hugo.jorge@campus.fct.unl.pt
